@@ -47,7 +47,7 @@ export async function createMcpServer(
 
   const server = new McpServer(
     {
-      name: 'chrome_devtools',
+      name: serverArgs.name ?? 'chrome_devtools',
       title: 'Chrome DevTools MCP server',
       version: VERSION,
     },
@@ -93,6 +93,7 @@ export async function createMcpServer(
             acceptInsecureCerts: serverArgs.acceptInsecureCerts,
             devtools,
             enableExtensions: serverArgs.categoryExtensions,
+            name: serverArgs.name,
           });
 
     if (context?.browser !== browser) {

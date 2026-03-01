@@ -1,6 +1,11 @@
 {
   "chrome-devtools": {
-    "command": "npx",
-    "args": ["chrome-devtools-mcp@latest"]
+    "command": "nsolid",
+    "args": ["--experimental-strip-types", "src/index.ts"],
+    "env": {
+      "NSOLID_TRACING_ENABLED": "1",
+      "NSOLID_OTLP": "localhost:4317",
+      "NSOLID_OTLP_CONFIG": "{}"
+    }
   }
 }
