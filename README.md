@@ -468,6 +468,13 @@ The Chrome DevTools MCP server supports the following configuration option:
   - **Type:** boolean
   - **Default:** `false`
 
+- **Automatic bot evasion**  
+  Pages controlled by the MCP server are automatically patched with a set of
+  lightweight stealth tweaks (navigator.webdriver=false, remove “Headless” from
+  the user agent, expose a minimal `chrome.runtime`, etc.). This reduces the
+  chance that websites can easily detect automation. No configuration is
+  required; the patches are applied when Chrome is launched or connected.
+
 - **`--executablePath`/ `--executable-path`, `-e`**
   Path to custom Chrome executable.
   - **Type:** string
@@ -535,6 +542,20 @@ The Chrome DevTools MCP server supports the following configuration option:
 
 - **`--usageStatistics`/ `--usage-statistics`**
   Usage statistics collection is disabled. No data is exfiltrated.
+  - **Type:** boolean
+  - **Default:** `false`
+
+- **`--humanizeInteractions`/ `--humanize-interactions`**
+  Enable humanized interaction timing and cursor movement for realistic automation in testing workflows.
+  - **Type:** boolean
+  - **Default:** `false`
+
+- **`--humanizeSeed`/ `--humanize-seed`**
+  Optional seed for deterministic humanized interaction randomness in CI and reproducible runs.
+  - **Type:** string
+
+- **`--humanizeIdleMouse`/ `--humanize-idle-mouse`**
+  Enable background idle mouse movement when humanized interactions are enabled. Mouse movement only; no clicks.
   - **Type:** boolean
   - **Default:** `false`
 

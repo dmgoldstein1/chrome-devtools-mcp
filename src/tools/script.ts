@@ -7,6 +7,7 @@
 import {zod} from '../third_party/index.js';
 import type {Frame, JSHandle, Page, WebWorker} from '../third_party/index.js';
 import type {ExtensionServiceWorker} from '../types.js';
+import {humanizer} from '../humanize.js';
 
 import {ToolCategory} from './categories.js';
 import type {Context, Response} from './ToolDefinition.js';
@@ -117,6 +118,7 @@ const performEvaluation = async (
   const fn = await evaluatable.evaluateHandle(`(${fnString})`);
   try {
     await context.waitForEventsAfterAction(async () => {
+      await humanizer.delayJitter(15, 90);
       const result = await evaluatable.evaluate(
         async (fn, ...args) => {
           // @ts-expect-error no types for function fn

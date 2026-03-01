@@ -8,6 +8,7 @@ import {logger} from '../logger.js';
 import type {McpContext, TextSnapshotNode} from '../McpContext.js';
 import {zod} from '../third_party/index.js';
 import type {ElementHandle, KeyInput} from '../third_party/index.js';
+import {humanizer} from '../humanize.js';
 import {parseKey} from '../utils/keyboard.js';
 
 import {ToolCategory} from './categories.js';
@@ -61,7 +62,9 @@ export const click = definePageTool({
     const uid = request.params.uid;
     const handle = await request.page.getElementByUid(uid);
     try {
+      await humanizer.moveMouseToElement(request.page.pptrPage, handle);
       await context.waitForEventsAfterAction(async () => {
+        await humanizer.delayJitter(20, 80);
         await handle.asLocator().click({
           count: request.params.dblClick ? 2 : 1,
         });
@@ -98,7 +101,13 @@ export const clickAt = definePageTool({
   },
   handler: async (request, response, context) => {
     const page = request.page;
+    await humanizer.moveMouseToPoint(
+      page.pptrPage,
+      request.params.x,
+      request.params.y,
+    );
     await context.waitForEventsAfterAction(async () => {
+      await humanizer.delayJitter(15, 60);
       await page.pptrPage.mouse.click(request.params.x, request.params.y, {
         clickCount: request.params.dblClick ? 2 : 1,
       });
@@ -133,7 +142,9 @@ export const hover = definePageTool({
     const uid = request.params.uid;
     const handle = await request.page.getElementByUid(uid);
     try {
+      await humanizer.moveMouseToElement(request.page.pptrPage, handle);
       await context.waitForEventsAfterAction(async () => {
+        await humanizer.delayJitter(10, 60);
         await handle.asLocator().hover();
       });
       response.appendResponseLine(`Successfully hovered over the element`);
@@ -235,6 +246,7 @@ export const fill = definePageTool({
   handler: async (request, response, context) => {
     const page = request.page;
     await context.waitForEventsAfterAction(async () => {
+      await humanizer.delayJitter(15, 70);
       await fillFormElement(
         request.params.uid,
         request.params.value,
@@ -263,8 +275,9 @@ export const typeText = definePageTool({
   handler: async (request, response, context) => {
     const page = request.page;
     await context.waitForEventsAfterAction(async () => {
-      await page.pptrPage.keyboard.type(request.params.text);
+      await humanizer.typeText(page.pptrPage, request.params.text);
       if (request.params.submitKey) {
+        await humanizer.delayJitter(20, 90);
         await page.pptrPage.keyboard.press(
           request.params.submitKey as KeyInput,
         );
@@ -294,7 +307,9 @@ export const drag = definePageTool({
     );
     const toHandle = await request.page.getElementByUid(request.params.to_uid);
     try {
+      await humanizer.moveMouseToElement(request.page.pptrPage, fromHandle);
       await context.waitForEventsAfterAction(async () => {
+        await humanizer.delayJitter(15, 80);
         await fromHandle.drag(toHandle);
         await new Promise(resolve => setTimeout(resolve, 50));
         await toHandle.drop(fromHandle);
@@ -332,6 +347,7 @@ export const fillForm = definePageTool({
     const page = request.page;
     for (const element of request.params.elements) {
       await context.waitForEventsAfterAction(async () => {
+        await humanizer.delayJitter(10, 60);
         await fillFormElement(
           element.uid,
           element.value,
@@ -418,11 +434,14 @@ export const pressKey = definePageTool({
     const [key, ...modifiers] = tokens;
 
     await context.waitForEventsAfterAction(async () => {
+      await humanizer.delayJitter(10, 70);
       for (const modifier of modifiers) {
         await page.pptrPage.keyboard.down(modifier);
+        await humanizer.delayJitter(5, 30);
       }
       await page.pptrPage.keyboard.press(key);
       for (const modifier of modifiers.toReversed()) {
+        await humanizer.delayJitter(5, 30);
         await page.pptrPage.keyboard.up(modifier);
       }
     });

@@ -9,6 +9,7 @@ import type fs from 'node:fs';
 import type {Channel} from './browser.js';
 import {ensureBrowserConnected, ensureBrowserLaunched} from './browser.js';
 import type {parseArguments} from './cli.js';
+import {humanizer} from './humanize.js';
 import {loadIssueDescriptions} from './issue-descriptions.js';
 import {logger} from './logger.js';
 import {McpContext} from './McpContext.js';
@@ -34,6 +35,17 @@ export async function createMcpServer(
     logFile?: fs.WriteStream;
   },
 ) {
+  humanizer.configure({
+    enabled: serverArgs.humanizeInteractions ?? false,
+    seed:
+      serverArgs.humanizeSeed === undefined
+        ? undefined
+        : String(serverArgs.humanizeSeed),
+    idleMouse:
+      (serverArgs.humanizeInteractions ?? false) &&
+      (serverArgs.humanizeIdleMouse ?? false),
+  });
+
   let clearcutLogger: ClearcutLogger | undefined;
   if (serverArgs.usageStatistics) {
     clearcutLogger = new ClearcutLogger({
@@ -175,6 +187,8 @@ export async function createMcpServer(
           const context = await getContext();
           logger(`${tool.name} context: resolved`);
           await context.detectOpenDevToolsWindows();
+          humanizer.setActivePage(context.getSelectedMcpPage().pptrPage);
+          await humanizer.beforeTool();
           const response = serverArgs.slim
             ? new SlimMcpResponse(serverArgs)
             : new McpResponse(serverArgs);
@@ -237,6 +251,7 @@ export async function createMcpServer(
             isError: true,
           };
         } finally {
+          await humanizer.afterTool();
           void clearcutLogger?.logToolInvocation({
             toolName: tool.name,
             success,

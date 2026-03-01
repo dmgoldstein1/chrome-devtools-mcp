@@ -95,7 +95,49 @@ describe('browser', () => {
       });
       assert.ok(connectedBrowser);
       assert.ok(connectedBrowser.connected);
+      // pages should also be patched after connecting
+      const [connPage] = await connectedBrowser.pages();
+      const connWebdriver = await connPage.evaluate(() => navigator.webdriver);
+      assert.strictEqual(connWebdriver, false);
       connectedBrowser.disconnect();
+    } finally {
+      await browser.close();
+    }
+  });
+
+  it('applies bot evasion to pages', async () => {
+    const tmpDir = os.tmpdir();
+    const folderPath = path.join(tmpDir, `temp-folder-${crypto.randomUUID()}`);
+    const browser = await launch({
+      headless: true,
+      isolated: false,
+      userDataDir: folderPath,
+      executablePath: executablePath(),
+      devtools: false,
+    });
+    try {
+      const pagesList = await browser.pages();
+      const urls = await Promise.all(pagesList.map(p => p.url()));
+      // surface urls in case of failure
+      if (urls.length === 0) {
+        assert.fail('no pages returned');
+      }
+      const page = pagesList[0];
+      const webdriver = await page.evaluate(() => navigator.webdriver);
+      if (webdriver !== false) {
+        throw new Error(
+          `navigator.webdriver still true (${webdriver}) on pages ${urls.join(',')}`,
+        );
+      }
+
+      const ua = await page.evaluate(() => navigator.userAgent);
+      assert(!ua.includes('Headless'), 'userAgent should not contain Headless');
+
+      // new pages should also be patched
+      const newPage = await browser.newPage();
+      const webdriver2 = await newPage.evaluate(() => navigator.webdriver);
+      assert.strictEqual(webdriver2, false);
+      await newPage.close();
     } finally {
       await browser.close();
     }

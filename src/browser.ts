@@ -18,6 +18,9 @@ import type {
 } from './third_party/index.js';
 import {puppeteer} from './third_party/index.js';
 
+// bot-evasion utilities
+import {installBotEvasion, applyBotEvasion} from './stealth.js';
+
 let browser: Browser | undefined;
 
 function makeTargetFilter() {
@@ -128,6 +131,16 @@ export async function ensureBrowserConnected(options: {
     );
   }
   logger('Connected Puppeteer');
+
+  // apply bot evasion immediately, then install handler as a safety.
+  try {
+    await applyBotEvasion(browser);
+    installBotEvasion(browser);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn('stealth: failed to apply on connect', err);
+  }
+
   return browser;
 }
 
@@ -228,6 +241,26 @@ export async function launch(options: McpLaunchOptions): Promise<Browser> {
       handleDevToolsAsPage: true,
       enableExtensions: options.enableExtensions,
     });
+
+    // apply bot‑evasion patches immediately and set up handlers for future
+    // pages.  Waiting for the promise ensures that pages created right after
+    // launch already have the stealth script in place for our tests.
+    try {
+      await applyBotEvasion(browser);
+    } catch (err) {
+      // graceful degradation; bot evasion is best-effort
+      // eslint-disable-next-line no-console
+      console.warn('stealth: failed to apply on launch', err);
+    }
+    // installBotEvasion is still available for callers who just want a
+    // fire-and-forget helper
+    try {
+      installBotEvasion(browser);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.warn('stealth: failed to install on launch', err);
+    }
+
     if (options.logFile) {
       // FIXME: we are probably subscribing too late to catch startup logs. We
       // should expose the process earlier or expose the getRecentLogs() getter.

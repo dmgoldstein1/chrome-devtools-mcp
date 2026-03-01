@@ -247,6 +247,23 @@ export const cliOptions = {
     describe:
       'Exposes a "slim" set of 3 tools covering navigation, script execution and screenshots only. Useful for basic browser tasks.',
   },
+  humanizeInteractions: {
+    type: 'boolean',
+    default: false,
+    describe:
+      'Enable humanized interaction timing and cursor movement for realistic automation in testing workflows.',
+  },
+  humanizeSeed: {
+    type: 'string',
+    describe:
+      'Optional seed for deterministic humanized interaction randomness in CI and reproducible runs.',
+  },
+  humanizeIdleMouse: {
+    type: 'boolean',
+    default: false,
+    describe:
+      'Enable background idle mouse movement when humanized interactions are enabled. Mouse movement only; no clicks.',
+  },
   name: {
     type: 'string',
     description:
@@ -271,6 +288,9 @@ export function parseArguments(version: string, argv = process.argv) {
         !args.executablePath
       ) {
         args.channel = 'stable';
+      }
+      if (args.humanizeInteractions && !args.humanizeIdleMouse) {
+        args.humanizeIdleMouse = true;
       }
       return true;
     })
@@ -338,6 +358,10 @@ export function parseArguments(version: string, argv = process.argv) {
       [
         '$0 --name my-server',
         'Run with a distinct name to allow multiple simultaneous server instances',
+      ],
+      [
+        '$0 --humanize-interactions --humanize-idle-mouse --humanize-seed demo-seed',
+        'Enable deterministic humanized interaction timing and idle mouse movement',
       ],
     ]);
 

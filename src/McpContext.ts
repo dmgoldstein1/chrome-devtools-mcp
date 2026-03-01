@@ -48,6 +48,7 @@ import {
   type InstalledExtension,
 } from './utils/ExtensionRegistry.js';
 import {WaitForHelper} from './WaitForHelper.js';
+import {humanizer} from './humanize.js';
 
 export type {
   EmulationSettings,
@@ -157,6 +158,7 @@ export class McpContext implements Context {
   }
 
   dispose() {
+    humanizer.clearActivePage();
     this.#networkCollector.dispose();
     this.#consoleCollector.dispose();
     this.#devtoolsUniverseManager.dispose();
@@ -487,6 +489,7 @@ export class McpContext implements Context {
 
   selectPage(newPage: McpPage): void {
     this.#selectedPage = newPage;
+    humanizer.setActivePage(newPage.pptrPage);
     this.#updateSelectedPageTimeouts();
   }
 

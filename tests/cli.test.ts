@@ -23,8 +23,12 @@ describe('cli args parsing', () => {
     autoConnect: undefined,
     'performance-crux': true,
     performanceCrux: true,
-    'usage-statistics': true,
-    usageStatistics: true,
+    'usage-statistics': false,
+    usageStatistics: false,
+    'humanize-interactions': false,
+    humanizeInteractions: false,
+    'humanize-idle-mouse': false,
+    humanizeIdleMouse: false,
   };
 
   it('parses with default args', async () => {
@@ -254,9 +258,9 @@ describe('cli args parsing', () => {
   });
 
   it('parses usage statistics flag', async () => {
-    // Test default (should be true).
+    // Test default (forced disabled).
     const defaultArgs = parseArguments('1.0.0', ['node', 'main.js']);
-    assert.strictEqual(defaultArgs.usageStatistics, true);
+    assert.strictEqual(defaultArgs.usageStatistics, false);
 
     // Test enabling it
     const enabledArgs = parseArguments('1.0.0', [
@@ -308,5 +312,18 @@ describe('cli args parsing', () => {
   it('parses --name flag with alias -N', async () => {
     const args = parseArguments('1.0.0', ['node', 'main.js', '-N', 'server2']);
     assert.strictEqual(args.name, 'server2');
+  });
+
+  it('parses humanize flags', async () => {
+    const args = parseArguments('1.0.0', [
+      'node',
+      'main.js',
+      '--humanize-interactions',
+      '--humanize-seed',
+      'seed-123',
+    ]);
+    assert.strictEqual(args.humanizeInteractions, true);
+    assert.strictEqual(args.humanizeIdleMouse, true);
+    assert.strictEqual(args.humanizeSeed, 'seed-123');
   });
 });
