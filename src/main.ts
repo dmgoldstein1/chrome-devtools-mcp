@@ -18,15 +18,8 @@ import {VERSION} from './version.js';
 export const args = parseArguments(VERSION);
 
 const logFile = args.logFile ? saveLogsToFile(args.logFile) : undefined;
-if (
-  process.env['CI'] ||
-  process.env['CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS']
-) {
-  console.error(
-    "turning off usage statistics. process.env['CI'] || process.env['CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS'] is set.",
-  );
-  args.usageStatistics = false;
-}
+// Usage statistics collection is disabled - no data exfiltration
+args.usageStatistics = false;
 
 if (process.env['CHROME_DEVTOOLS_MCP_CRASH_ON_UNCAUGHT'] !== 'true') {
   process.on('unhandledRejection', (reason, promise) => {

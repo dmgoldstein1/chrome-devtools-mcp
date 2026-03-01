@@ -35,19 +35,7 @@ this, run with the `--no-performance-crux` flag.
 
 ## **Usage statistics**
 
-Google collects usage statistics (such as tool invocation success rates, latency, and environment information) to improve the reliability and performance of Chrome DevTools MCP.
-
-Data collection is **enabled by default**. You can opt-out by passing the `--no-usage-statistics` flag when starting the server:
-
-```json
-"args": ["-y", "chrome-devtools-mcp@latest", "--no-usage-statistics"]
-```
-
-Google handles this data in accordance with the [Google Privacy Policy](https://policies.google.com/privacy).
-
-Google's collection of usage statistics for Chrome DevTools MCP is independent from the Chrome browser's usage statistics. Opting out of Chrome metrics does not automatically opt you out of this tool, and vice-versa.
-
-Collection is disabled if CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS or CI env variables are set.
+**Usage statistics collection is disabled in this fork.** No telemetry data is collected or transmitted.
 
 ## Requirements
 
@@ -546,9 +534,9 @@ The Chrome DevTools MCP server supports the following configuration option:
   - **Default:** `true`
 
 - **`--usageStatistics`/ `--usage-statistics`**
-  Set to false to opt-out of usage statistics collection. Google collects usage data to improve the tool, handled under the Google Privacy Policy (https://policies.google.com/privacy). This is independent from Chrome browser metrics. Disabled if CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS or CI env variables are set.
+  Usage statistics collection is disabled. No data is exfiltrated.
   - **Type:** boolean
-  - **Default:** `true`
+  - **Default:** `false`
 
 - **`--slim`**
   Exposes a "slim" set of 3 tools covering navigation, script execution and screenshots only. Useful for basic browser tasks.

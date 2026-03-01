@@ -223,9 +223,9 @@ export const cliOptions = {
   },
   usageStatistics: {
     type: 'boolean',
-    default: true,
+    default: false,
     describe:
-      'Set to false to opt-out of usage statistics collection. Google collects usage data to improve the tool, handled under the Google Privacy Policy (https://policies.google.com/privacy). This is independent from Chrome browser metrics. Disabled if CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS or CI env variables are set.',
+      'Usage statistics collection is disabled. No data is exfiltrated.',
   },
   clearcutEndpoint: {
     type: 'string',
@@ -246,6 +246,12 @@ export const cliOptions = {
     type: 'boolean',
     describe:
       'Exposes a "slim" set of 3 tools covering navigation, script execution and screenshots only. Useful for basic browser tasks.',
+  },
+  name: {
+    type: 'string',
+    description:
+      'Name identifier for this MCP server instance. Useful when running multiple chrome-devtools-mcp servers simultaneously. Each named instance gets its own Chrome profile directory.',
+    alias: 'N',
   },
 } satisfies Record<string, YargsOptions>;
 
@@ -328,6 +334,10 @@ export function parseArguments(version: string, argv = process.argv) {
       [
         '$0 --slim',
         'Only 3 tools: navigation, JavaScript execution and screenshot',
+      ],
+      [
+        '$0 --name my-server',
+        'Run with a distinct name to allow multiple simultaneous server instances',
       ],
     ]);
 

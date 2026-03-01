@@ -294,4 +294,19 @@ describe('cli args parsing', () => {
     ]);
     assert.strictEqual(disabledArgs.performanceCrux, false);
   });
+
+  it('parses --name flag', async () => {
+    const args = parseArguments('1.0.0', [
+      'node',
+      'main.js',
+      '--name',
+      'my-server',
+    ]);
+    assert.strictEqual(args.name, 'my-server');
+  });
+
+  it('parses --name flag with alias -N', async () => {
+    const args = parseArguments('1.0.0', ['node', 'main.js', '-N', 'server2']);
+    assert.strictEqual(args.name, 'server2');
+  });
 });
