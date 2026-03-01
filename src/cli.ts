@@ -247,6 +247,12 @@ export const cliOptions = {
     describe:
       'Exposes a "slim" set of 3 tools covering navigation, script execution and screenshots only. Useful for basic browser tasks.',
   },
+  name: {
+    type: 'string',
+    description:
+      'Name identifier for this MCP server instance. Useful when running multiple chrome-devtools-mcp servers simultaneously. Each named instance gets its own Chrome profile directory.',
+    alias: 'N',
+  },
 } satisfies Record<string, YargsOptions>;
 
 export type ParsedArguments = ReturnType<typeof parseArguments>;
@@ -328,6 +334,10 @@ export function parseArguments(version: string, argv = process.argv) {
       [
         '$0 --slim',
         'Only 3 tools: navigation, JavaScript execution and screenshot',
+      ],
+      [
+        '$0 --name my-server',
+        'Run with a distinct name to allow multiple simultaneous server instances',
       ],
     ]);
 

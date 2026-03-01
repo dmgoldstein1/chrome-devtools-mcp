@@ -147,6 +147,7 @@ interface McpLaunchOptions {
   ignoreDefaultChromeArgs?: string[];
   devtools: boolean;
   enableExtensions?: boolean;
+  name?: string;
 }
 
 export function detectDisplay(): void {
@@ -171,8 +172,8 @@ export async function launch(options: McpLaunchOptions): Promise<Browser> {
   const {channel, executablePath, headless, isolated} = options;
   const profileDirName =
     channel && channel !== 'stable'
-      ? `chrome-profile-${channel}`
-      : 'chrome-profile';
+      ? `chrome-profile-${channel}${options.name ? `-${options.name}` : ''}`
+      : `chrome-profile${options.name ? `-${options.name}` : ''}`;
 
   let userDataDir = options.userDataDir;
   if (!isolated && !userDataDir) {
