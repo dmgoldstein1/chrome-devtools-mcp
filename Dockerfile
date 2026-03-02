@@ -15,9 +15,10 @@ RUN npm ci
 # Build the project
 RUN npm run bundle
 
-# Create launcher script
+# Create launcher scripts
 COPY start.sh /usr/local/bin/start-mcp.sh
-RUN chmod +x /usr/local/bin/start-mcp.sh
+COPY wrapper.sh /usr/local/bin/wrapper.sh
+RUN chmod +x /usr/local/bin/start-mcp.sh /usr/local/bin/wrapper.sh
 
 # Expose default MCP server port (stdio-based, but can be used with network bridges)
 EXPOSE 3000

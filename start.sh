@@ -9,13 +9,8 @@ ALLOW_FS_WRITE="${ALLOW_FS_WRITE:-/tmp}"
 
 echo "[mcp-server] launching nsolid with hardened flags for Chrome DevTools MCP"
 
-# Run the MCP server with hardened N|Solid runtime flags
-# Hardening via: jitless (no JIT), no-addons (no native modules), disable-proto=throw (prevent prototype pollution)
-/usr/local/bin/nsolid \
-  --disable-proto=throw \
-  --no-addons \
-  --jitless \
-  build/src/index.js &
+# Run via wrapper script to set descriptive process name
+/usr/local/bin/wrapper.sh &
 
 # Keep container alive
 tail -f /dev/null
