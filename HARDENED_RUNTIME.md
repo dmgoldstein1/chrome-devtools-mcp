@@ -43,6 +43,8 @@ The following environment variables can be set:
 - `ALLOW_FS_READ`: File system paths allowed for read access (default: `/app`)
 - `ALLOW_FS_WRITE`: File system paths allowed for write access (default: `/tmp`)
 - `NODE_ENV`: Set to `production` by default
+- `NSOLID_APPNAME`: Application name shown in the N|Solid telemetry console (default: `chrome-devtools-mcp`). Set this to a unique value when running multiple instances so they can be distinguished in the dashboard.
+- `NSOLID_COMMAND`: Host and port of the N|Solid console command socket (e.g. `<console-host>:9001`). Required to send telemetry to a remote N|Solid console.
 
 ## Security
 
