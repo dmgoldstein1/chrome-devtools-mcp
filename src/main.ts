@@ -16,6 +16,7 @@ import process from 'node:process';
 import {randomUUID} from 'node:crypto';
 
 import {cliOptions, parseArguments} from './cli.js';
+import {ProcessHeartbeat} from './heartbeat.js';
 import {logger, saveLogsToFile} from './logger.js';
 import {createMcpServer} from './server.js';
 import {computeFlagUsage} from './telemetry/flagUtils.js';
@@ -100,6 +101,15 @@ httpServer.listen(PORT, () => {
   console.error(`\nServer is running at: http://localhost:${PORT}`);
   console.error(`Session ID: ${transport.sessionId || 'stateless'}\n`);
   logDisclaimers();
+  
+  // Start process heartbeat to ClickHouse for multi-process discovery
+  if (process.env.CLICKHOUSE_URL) {
+    const heartbeat = new ProcessHeartbeat();
+    heartbeat.start();
+    logger('[heartbeat] Process metrics heartbeat started');
+  } else {
+    logger('[heartbeat] Skipped - CLICKHOUSE_URL not configured');
+  }
 });
 
 void clearcutLogger?.logDailyActiveIfNeeded();

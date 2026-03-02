@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 # Wrapper script that runs the Chrome DevTools MCP server with a descriptive process name
-# and full hardened N|Solid security flags.
+# and hardened N|Solid security flags (without frozen-intrinsics which conflicts with core-js).
+# Note: Filesystem permissions are relaxed to allow reading system packages and node_modules.
 
 exec -a chrome-devtools-mcp /usr/local/bin/nsolid \
   --disable-proto=throw \
   --no-addons \
   --jitless \
   --disallow-code-generation-from-strings \
-  --frozen-intrinsics \
   --experimental-permission \
-  --allow-fs-read="${ALLOW_FS_READ:-/app}" \
-  --allow-fs-write="${ALLOW_FS_WRITE:-/tmp}" \
+  --allow-fs-read="/" \
+  --allow-fs-write="/tmp" \
   build/src/index.js
