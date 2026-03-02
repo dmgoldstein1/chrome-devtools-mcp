@@ -1,0 +1,18 @@
+services:
+  chrome-devtools-mcp:
+    build: .
+    image: chrome-devtools-mcp-hardened
+    container_name: chrome-devtools-mcp
+    environment:
+      - NODE_ENV=production
+      - NSOLID_APPNAME=chrome-devtools-mcp
+      # Override filesystem permission boundaries if needed:
+      # - ALLOW_FS_READ=/app
+      # - ALLOW_FS_WRITE=/tmp
+      # Connect to a running N|Solid console for telemetry:
+      # - NSOLID_COMMAND=<console-host>:9001
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
